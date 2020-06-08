@@ -27,5 +27,8 @@ namespace WebApiQuiz.Models
     
         public DbSet<Participant> Participants { get; set; }
         public DbSet<Question> Questions { get; set; }
+        public DbSet<vScoreCard> vScoreCards { get; set; }
+        public DbSet<vSCard> vSCards { get; set; }
+        public DbSet<Score> Scores { get; set; }
     }
 }

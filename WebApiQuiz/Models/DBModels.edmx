@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="QuizDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="QuizDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Participant">
           <Key>
             <PropertyRef Name="ParticipantId" />
@@ -26,13 +26,99 @@
           <Property Name="Option3" Type="varchar" MaxLength="50" />
           <Property Name="Option4" Type="varchar" MaxLength="50" />
           <Property Name="Answer" Type="int" />
+          <Property Name="QnType" Type="int" />
         </EntityType>
+        <EntityType Name="Score">
+          <Key>
+            <PropertyRef Name="ScoreId" />
+          </Key>
+          <Property Name="ScoreId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ParticipantId" Type="int" />
+          <Property Name="QnId" Type="int" />
+          <Property Name="Answer" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'QuizDB.dbo.vSCard' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vSCard">
+          <Key>
+            <PropertyRef Name="ParticipantId" />
+          </Key>
+          <Property Name="ParticipantId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'QuizDB.dbo.vScoreCard' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="vScoreCard">
+          <Key>
+            <PropertyRef Name="ParticipantId" />
+          </Key>
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="Score" Type="int" />
+          <Property Name="ParticipantId" Type="int" Nullable="false" />
+          <Property Name="Qn" Type="varchar" MaxLength="50" />
+          <Property Name="Option1" Type="varchar" MaxLength="50" />
+          <Property Name="Option2" Type="varchar" MaxLength="50" />
+          <Property Name="Option3" Type="varchar" MaxLength="50" />
+          <Property Name="Option4" Type="varchar" MaxLength="50" />
+          <Property Name="Answer" Type="int" />
+          <Property Name="Expr1" Type="int" />
+        </EntityType>
+        <Association Name="FK_Score_Participant">
+          <End Role="Participant" Type="Self.Participant" Multiplicity="0..1" />
+          <End Role="Score" Type="Self.Score" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Participant">
+              <PropertyRef Name="ParticipantId" />
+            </Principal>
+            <Dependent Role="Score">
+              <PropertyRef Name="ParticipantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Score_Question">
+          <End Role="Question" Type="Self.Question" Multiplicity="0..1" />
+          <End Role="Score" Type="Self.Score" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="QnId" />
+            </Principal>
+            <Dependent Role="Score">
+              <PropertyRef Name="QnId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="QuizDBModelStoreContainer">
           <EntitySet Name="Participant" EntityType="Self.Participant" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Score" EntityType="Self.Score" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vSCard" EntityType="Self.vSCard" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[vSCard].[ParticipantId] AS [ParticipantId]
+FROM [dbo].[vSCard] AS [vSCard]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="vScoreCard" EntityType="Self.vScoreCard" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+[vScoreCard].[Name] AS [Name], 
+[vScoreCard].[Score] AS [Score], 
+[vScoreCard].[ParticipantId] AS [ParticipantId], 
+[vScoreCard].[Qn] AS [Qn], 
+[vScoreCard].[Option1] AS [Option1], 
+[vScoreCard].[Option2] AS [Option2], 
+[vScoreCard].[Option3] AS [Option3], 
+[vScoreCard].[Option4] AS [Option4], 
+[vScoreCard].[Answer] AS [Answer], 
+[vScoreCard].[Expr1] AS [Expr1]
+FROM [dbo].[vScoreCard] AS [vScoreCard]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Score_Participant" Association="Self.FK_Score_Participant">
+            <End Role="Participant" EntitySet="Participant" />
+            <End Role="Score" EntitySet="Score" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Score_Question" Association="Self.FK_Score_Question">
+            <End Role="Question" EntitySet="Question" />
+            <End Role="Score" EntitySet="Score" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="QuizDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -45,6 +131,7 @@
           <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Score" Type="Int32" />
           <Property Name="TimeSpent" Type="Int32" />
+          <NavigationProperty Name="Scores" Relationship="QuizDBModel.FK_Score_Participant" FromRole="Participant" ToRole="Score" />
         </EntityType>
         <EntityType Name="Question">
           <Key>
@@ -57,11 +144,80 @@
           <Property Name="Option3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Option4" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Answer" Type="Int32" />
+          <Property Name="QnType" Type="Int32" />
+          <NavigationProperty Name="Scores" Relationship="QuizDBModel.FK_Score_Question" FromRole="Question" ToRole="Score" />
         </EntityType>
         <EntityContainer Name="DBModel" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Participants" EntityType="Self.Participant" />
           <EntitySet Name="Questions" EntityType="Self.Question" />
+          <EntitySet Name="vScoreCards" EntityType="QuizDBModel.vScoreCard" />
+          <EntitySet Name="vSCards" EntityType="QuizDBModel.vSCard" />
+          <EntitySet Name="Scores" EntityType="QuizDBModel.Score" />
+          <AssociationSet Name="FK_Score_Participant" Association="QuizDBModel.FK_Score_Participant">
+            <End Role="Participant" EntitySet="Participants" />
+            <End Role="Score" EntitySet="Scores" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Score_Question" Association="QuizDBModel.FK_Score_Question">
+            <End Role="Question" EntitySet="Questions" />
+            <End Role="Score" EntitySet="Scores" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="vScoreCard">
+          <Key>
+            <PropertyRef Name="ParticipantId" />
+          </Key>
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Score" Type="Int32" />
+          <Property Name="ParticipantId" Type="Int32" Nullable="false" />
+          <Property Name="Qn" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Option1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Option2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Option3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Option4" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Answer" Type="Int32" />
+          <Property Name="Expr1" Type="Int32" />
+        </EntityType>
+        <EntityType Name="vSCard">
+          <Key>
+            <PropertyRef Name="ParticipantId" />
+          </Key>
+          <Property Name="ParticipantId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Score">
+          <Key>
+            <PropertyRef Name="ScoreId" />
+          </Key>
+          <Property Name="ScoreId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ParticipantId" Type="Int32" />
+          <Property Name="QnId" Type="Int32" />
+          <Property Name="Answer" Type="Int32" />
+          <NavigationProperty Name="Participant" Relationship="QuizDBModel.FK_Score_Participant" FromRole="Score" ToRole="Participant" />
+          <NavigationProperty Name="Question" Relationship="QuizDBModel.FK_Score_Question" FromRole="Score" ToRole="Question" />
+        </EntityType>
+        <Association Name="FK_Score_Participant">
+          <End Type="QuizDBModel.Participant" Role="Participant" Multiplicity="0..1" />
+          <End Type="QuizDBModel.Score" Role="Score" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Participant">
+              <PropertyRef Name="ParticipantId" />
+            </Principal>
+            <Dependent Role="Score">
+              <PropertyRef Name="ParticipantId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Score_Question">
+          <End Type="QuizDBModel.Question" Role="Question" Multiplicity="0..1" />
+          <End Type="QuizDBModel.Score" Role="Score" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Question">
+              <PropertyRef Name="QnId" />
+            </Principal>
+            <Dependent Role="Score">
+              <PropertyRef Name="QnId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -82,6 +238,7 @@
           <EntitySetMapping Name="Questions">
             <EntityTypeMapping TypeName="QuizDBModel.Question">
               <MappingFragment StoreEntitySet="Question">
+                <ScalarProperty Name="QnType" ColumnName="QnType" />
                 <ScalarProperty Name="QnId" ColumnName="QnId" />
                 <ScalarProperty Name="Qn" ColumnName="Qn" />
                 <ScalarProperty Name="Option1" ColumnName="Option1" />
@@ -89,6 +246,39 @@
                 <ScalarProperty Name="Option3" ColumnName="Option3" />
                 <ScalarProperty Name="Option4" ColumnName="Option4" />
                 <ScalarProperty Name="Answer" ColumnName="Answer" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vScoreCards">
+            <EntityTypeMapping TypeName="QuizDBModel.vScoreCard">
+              <MappingFragment StoreEntitySet="vScoreCard">
+                <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+                <ScalarProperty Name="Answer" ColumnName="Answer" />
+                <ScalarProperty Name="Option4" ColumnName="Option4" />
+                <ScalarProperty Name="Option3" ColumnName="Option3" />
+                <ScalarProperty Name="Option2" ColumnName="Option2" />
+                <ScalarProperty Name="Option1" ColumnName="Option1" />
+                <ScalarProperty Name="Qn" ColumnName="Qn" />
+                <ScalarProperty Name="ParticipantId" ColumnName="ParticipantId" />
+                <ScalarProperty Name="Score" ColumnName="Score" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vSCards">
+            <EntityTypeMapping TypeName="QuizDBModel.vSCard">
+              <MappingFragment StoreEntitySet="vSCard">
+                <ScalarProperty Name="ParticipantId" ColumnName="ParticipantId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Scores">
+            <EntityTypeMapping TypeName="QuizDBModel.Score">
+              <MappingFragment StoreEntitySet="Score">
+                <ScalarProperty Name="Answer" ColumnName="Answer" />
+                <ScalarProperty Name="QnId" ColumnName="QnId" />
+                <ScalarProperty Name="ParticipantId" ColumnName="ParticipantId" />
+                <ScalarProperty Name="ScoreId" ColumnName="ScoreId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

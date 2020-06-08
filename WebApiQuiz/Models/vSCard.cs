@@ -12,19 +12,8 @@ namespace WebApiQuiz.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Participant
+    public partial class vSCard
     {
-        public Participant()
-        {
-            this.Scores = new HashSet<Score>();
-        }
-    
         public int ParticipantId { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public Nullable<int> Score { get; set; }
-        public Nullable<int> TimeSpent { get; set; }
-    
-        public virtual ICollection<Score> Scores { get; set; }
     }
 }

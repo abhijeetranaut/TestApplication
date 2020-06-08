@@ -12,22 +12,14 @@ namespace WebApiQuiz.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Question
+    public partial class Score
     {
-        public Question()
-        {
-            this.Scores = new HashSet<Score>();
-        }
-    
-        public int QnId { get; set; }
-        public string Qn { get; set; }
-        public string Option1 { get; set; }
-        public string Option2 { get; set; }
-        public string Option3 { get; set; }
-        public string Option4 { get; set; }
+        public int ScoreId { get; set; }
+        public Nullable<int> ParticipantId { get; set; }
+        public Nullable<int> QnId { get; set; }
         public Nullable<int> Answer { get; set; }
-        public Nullable<int> QnType { get; set; }
     
-        public virtual ICollection<Score> Scores { get; set; }
+        public virtual Participant Participant { get; set; }
+        public virtual Question Question { get; set; }
     }
 }

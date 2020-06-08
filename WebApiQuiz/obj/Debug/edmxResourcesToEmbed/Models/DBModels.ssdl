@@ -21,9 +21,96 @@
     <Property Name="Option3" Type="varchar" MaxLength="50" />
     <Property Name="Option4" Type="varchar" MaxLength="50" />
     <Property Name="Answer" Type="int" />
+    <Property Name="QnType" Type="int" />
   </EntityType>
+  <EntityType Name="Score">
+    <Key>
+      <PropertyRef Name="ScoreId" />
+    </Key>
+    <Property Name="ScoreId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ParticipantId" Type="int" />
+    <Property Name="QnId" Type="int" />
+    <Property Name="Answer" Type="int" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'QuizDB.dbo.vSCard' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="vSCard">
+    <Key>
+      <PropertyRef Name="ParticipantId" />
+    </Key>
+    <Property Name="ParticipantId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'QuizDB.dbo.vScoreCard' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="vScoreCard">
+    <Key>
+      <PropertyRef Name="ParticipantId" />
+    </Key>
+    <Property Name="Name" Type="varchar" MaxLength="50" />
+    <Property Name="Score" Type="int" />
+    <Property Name="ParticipantId" Type="int" Nullable="false" />
+    <Property Name="Qn" Type="varchar" MaxLength="50" />
+    <Property Name="Option1" Type="varchar" MaxLength="50" />
+    <Property Name="Option2" Type="varchar" MaxLength="50" />
+    <Property Name="Option3" Type="varchar" MaxLength="50" />
+    <Property Name="Option4" Type="varchar" MaxLength="50" />
+    <Property Name="Answer" Type="int" />
+    <Property Name="Expr1" Type="int" />
+  </EntityType>
+  <Association Name="FK_Score_Participant">
+    <End Role="Participant" Type="Self.Participant" Multiplicity="0..1" />
+    <End Role="Score" Type="Self.Score" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Participant">
+        <PropertyRef Name="ParticipantId" />
+      </Principal>
+      <Dependent Role="Score">
+        <PropertyRef Name="ParticipantId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Score_Question">
+    <End Role="Question" Type="Self.Question" Multiplicity="0..1" />
+    <End Role="Score" Type="Self.Score" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Question">
+        <PropertyRef Name="QnId" />
+      </Principal>
+      <Dependent Role="Score">
+        <PropertyRef Name="QnId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <EntityContainer Name="QuizDBModelStoreContainer">
     <EntitySet Name="Participant" EntityType="Self.Participant" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Question" EntityType="Self.Question" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Score" EntityType="Self.Score" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="vSCard" EntityType="Self.vSCard" store:Type="Views" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+[vSCard].[ParticipantId] AS [ParticipantId]
+FROM [dbo].[vSCard] AS [vSCard]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="vScoreCard" EntityType="Self.vScoreCard" store:Type="Views" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+[vScoreCard].[Name] AS [Name], 
+[vScoreCard].[Score] AS [Score], 
+[vScoreCard].[ParticipantId] AS [ParticipantId], 
+[vScoreCard].[Qn] AS [Qn], 
+[vScoreCard].[Option1] AS [Option1], 
+[vScoreCard].[Option2] AS [Option2], 
+[vScoreCard].[Option3] AS [Option3], 
+[vScoreCard].[Option4] AS [Option4], 
+[vScoreCard].[Answer] AS [Answer], 
+[vScoreCard].[Expr1] AS [Expr1]
+FROM [dbo].[vScoreCard] AS [vScoreCard]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK_Score_Participant" Association="Self.FK_Score_Participant">
+      <End Role="Participant" EntitySet="Participant" />
+      <End Role="Score" EntitySet="Score" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Score_Question" Association="Self.FK_Score_Question">
+      <End Role="Question" EntitySet="Question" />
+      <End Role="Score" EntitySet="Score" />
+    </AssociationSet>
   </EntityContainer>
 </Schema>

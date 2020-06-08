@@ -15,6 +15,7 @@
     <EntitySetMapping Name="Questions">
       <EntityTypeMapping TypeName="QuizDBModel.Question">
         <MappingFragment StoreEntitySet="Question">
+          <ScalarProperty Name="QnType" ColumnName="QnType" />
           <ScalarProperty Name="QnId" ColumnName="QnId" />
           <ScalarProperty Name="Qn" ColumnName="Qn" />
           <ScalarProperty Name="Option1" ColumnName="Option1" />
@@ -22,6 +23,39 @@
           <ScalarProperty Name="Option3" ColumnName="Option3" />
           <ScalarProperty Name="Option4" ColumnName="Option4" />
           <ScalarProperty Name="Answer" ColumnName="Answer" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="vScoreCards">
+      <EntityTypeMapping TypeName="QuizDBModel.vScoreCard">
+        <MappingFragment StoreEntitySet="vScoreCard">
+          <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+          <ScalarProperty Name="Answer" ColumnName="Answer" />
+          <ScalarProperty Name="Option4" ColumnName="Option4" />
+          <ScalarProperty Name="Option3" ColumnName="Option3" />
+          <ScalarProperty Name="Option2" ColumnName="Option2" />
+          <ScalarProperty Name="Option1" ColumnName="Option1" />
+          <ScalarProperty Name="Qn" ColumnName="Qn" />
+          <ScalarProperty Name="ParticipantId" ColumnName="ParticipantId" />
+          <ScalarProperty Name="Score" ColumnName="Score" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="vSCards">
+      <EntityTypeMapping TypeName="QuizDBModel.vSCard">
+        <MappingFragment StoreEntitySet="vSCard">
+          <ScalarProperty Name="ParticipantId" ColumnName="ParticipantId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Scores">
+      <EntityTypeMapping TypeName="QuizDBModel.Score">
+        <MappingFragment StoreEntitySet="Score">
+          <ScalarProperty Name="Answer" ColumnName="Answer" />
+          <ScalarProperty Name="QnId" ColumnName="QnId" />
+          <ScalarProperty Name="ParticipantId" ColumnName="ParticipantId" />
+          <ScalarProperty Name="ScoreId" ColumnName="ScoreId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

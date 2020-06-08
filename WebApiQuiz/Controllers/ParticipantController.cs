@@ -35,5 +35,24 @@ namespace WebApiQuiz.Controllers
                 
             }
         }
+
+        [HttpGet]
+        [Route("api/Participants")]
+
+        public HttpResponseMessage GetParticipant()
+        {
+            using (DBModel db = new DBModel())
+            {
+                var Par = db.Participants.Select(x => new { Name = x.Name,ParticipantId=x.ParticipantId, Score = x.Score, TimeSpent = x.TimeSpent }).ToArray();
+                var ParDetails = Par.AsEnumerable().Select(x => new
+                {
+                    Name = x.Name,
+                    ParticipantId = x.ParticipantId,
+                    Score = x.Score,
+                    TimeSpent = x.TimeSpent
+                }).ToList();
+                return this.Request.CreateResponse(HttpStatusCode.OK, ParDetails);
+            }
+        }
     }
 }

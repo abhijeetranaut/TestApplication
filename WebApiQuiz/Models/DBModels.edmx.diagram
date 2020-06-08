@@ -7,6 +7,11 @@
       <Diagram DiagramId="8f7bc872228e47209aef2fce3ed84187" Name="Diagram1">
         <EntityTypeShape EntityType="QuizDBModel.Participant" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="QuizDBModel.Question" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QuizDBModel.vScoreCard" Width="1.5" PointX="0.75" PointY="4.75" />
+        <EntityTypeShape EntityType="QuizDBModel.vSCard" Width="1.5" PointX="3.375" PointY="4.75" />
+        <EntityTypeShape EntityType="QuizDBModel.Score" Width="1.5" PointX="5" PointY="1" />
+        <AssociationConnector Association="QuizDBModel.FK_Score_Participant" />
+        <AssociationConnector Association="QuizDBModel.FK_Score_Question" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

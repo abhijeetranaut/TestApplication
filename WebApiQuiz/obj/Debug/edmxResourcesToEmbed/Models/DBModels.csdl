@@ -9,6 +9,7 @@
     <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="Score" Type="Int32" />
     <Property Name="TimeSpent" Type="Int32" />
+    <NavigationProperty Name="Scores" Relationship="QuizDBModel.FK_Score_Participant" FromRole="Participant" ToRole="Score" />
   </EntityType>
   <EntityType Name="Question">
     <Key>
@@ -21,9 +22,78 @@
     <Property Name="Option3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="Option4" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
     <Property Name="Answer" Type="Int32" />
+    <Property Name="QnType" Type="Int32" />
+    <NavigationProperty Name="Scores" Relationship="QuizDBModel.FK_Score_Question" FromRole="Question" ToRole="Score" />
   </EntityType>
   <EntityContainer Name="DBModel" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="Participants" EntityType="Self.Participant" />
     <EntitySet Name="Questions" EntityType="Self.Question" />
+    <EntitySet Name="vScoreCards" EntityType="QuizDBModel.vScoreCard" />
+    <EntitySet Name="vSCards" EntityType="QuizDBModel.vSCard" />
+    <EntitySet Name="Scores" EntityType="QuizDBModel.Score" />
+    <AssociationSet Name="FK_Score_Participant" Association="QuizDBModel.FK_Score_Participant">
+      <End Role="Participant" EntitySet="Participants" />
+      <End Role="Score" EntitySet="Scores" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Score_Question" Association="QuizDBModel.FK_Score_Question">
+      <End Role="Question" EntitySet="Questions" />
+      <End Role="Score" EntitySet="Scores" />
+    </AssociationSet>
   </EntityContainer>
+  <EntityType Name="vScoreCard">
+    <Key>
+      <PropertyRef Name="ParticipantId" />
+    </Key>
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Score" Type="Int32" />
+    <Property Name="ParticipantId" Type="Int32" Nullable="false" />
+    <Property Name="Qn" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Option1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Option2" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Option3" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Option4" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Answer" Type="Int32" />
+    <Property Name="Expr1" Type="Int32" />
+  </EntityType>
+  <EntityType Name="vSCard">
+    <Key>
+      <PropertyRef Name="ParticipantId" />
+    </Key>
+    <Property Name="ParticipantId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+  </EntityType>
+  <EntityType Name="Score">
+    <Key>
+      <PropertyRef Name="ScoreId" />
+    </Key>
+    <Property Name="ScoreId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ParticipantId" Type="Int32" />
+    <Property Name="QnId" Type="Int32" />
+    <Property Name="Answer" Type="Int32" />
+    <NavigationProperty Name="Participant" Relationship="QuizDBModel.FK_Score_Participant" FromRole="Score" ToRole="Participant" />
+    <NavigationProperty Name="Question" Relationship="QuizDBModel.FK_Score_Question" FromRole="Score" ToRole="Question" />
+  </EntityType>
+  <Association Name="FK_Score_Participant">
+    <End Type="QuizDBModel.Participant" Role="Participant" Multiplicity="0..1" />
+    <End Type="QuizDBModel.Score" Role="Score" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Participant">
+        <PropertyRef Name="ParticipantId" />
+      </Principal>
+      <Dependent Role="Score">
+        <PropertyRef Name="ParticipantId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Score_Question">
+    <End Type="QuizDBModel.Question" Role="Question" Multiplicity="0..1" />
+    <End Type="QuizDBModel.Score" Role="Score" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Question">
+        <PropertyRef Name="QnId" />
+      </Principal>
+      <Dependent Role="Score">
+        <PropertyRef Name="QnId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
 </Schema>
